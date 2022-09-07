@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "716378670953",
+    "project_id": "photoalbumishere",
+    "storage_bucket": "photoalbumishere.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716378670953:android:d82aa364e7adf6a69a9ff8",
+        "android_client_info": {
+          "package_name": "com.example.firebaseexample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716378670953-q1cbmbgrj94fifl2ahq03fbfi0qddl1c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqIN88T9bpJ35Hr4Ho4Gioq0CjA5MTPE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "716378670953-q1cbmbgrj94fifl2ahq03fbfi0qddl1c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
