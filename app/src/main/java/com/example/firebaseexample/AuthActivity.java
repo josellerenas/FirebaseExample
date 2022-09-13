@@ -1,6 +1,7 @@
 package com.example.firebaseexample;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -9,21 +10,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Layout;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 //Troubleshooting
 //
@@ -138,9 +141,10 @@ public class AuthActivity extends AppCompatActivity {
                         .requestEmail()
                         .build();
 
-                // TODO Keep setting up the Google LogIn
                 GoogleSignInClient googleClient = GoogleSignIn.getClient(AuthActivity.this, googleConf);
-//                startActivity(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
+                googleClient.signOut();
+
+                startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
             }
         });
     }
@@ -159,5 +163,35 @@ public class AuthActivity extends AppCompatActivity {
         homeIntent.putExtra("email", email);
         homeIntent.putExtra("provider", provider.name());
         startActivity(homeIntent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+
+        try {
+            GoogleSignInAccount account = task.getResult(ApiException.class);
+
+            if (account != null) {
+                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+
+                FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(AuthActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            showHome(account.getEmail(), ProviderType.GOOGLE);
+                        } else {
+                            showAlert();
+                        }
+                    }
+                });
+            }
+        } catch (ApiException e) {
+            showAlert();
+        }
+
+
     }
 }
